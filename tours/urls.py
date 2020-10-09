@@ -24,7 +24,7 @@ handler500 = custom_handler500
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.MainView),
-    path('departure/<str:departure>/', views.DepartureView),
-    path('tour/<int:id>', views.TourView)
+    path('', views.main_view),
+    path('departure/<str:departure>/', views.departure_view),
+    path('tour/<int:id>', views.tour_view)
 ]

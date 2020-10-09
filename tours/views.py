@@ -1,30 +1,43 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 
-departures = {"msk": "Москвы",
-              "spb": "Петербурга",
-              "nsk": "Новосибирска",
-              "ekb": "Екатеринбурга",
-              "kazan": "Казани"}
+from tours import data, services
 
 
-# Create your views here.
-def MainView(request):
-    return render(request, 'index.html')
+def main_view(request):
+    info = services.random_cards(data.tours)
+    return render(request, 'index.html', context={
+        "tours": info,
+        "title": data.title,
+        "description": data.description,
+        "subtitle": data.subtitle,
+        "departures": data.departures})
 
 
-def DepartureView(request, departure):
-    city = departures.get(departure)
+def departure_view(request, departure):
+    city = data.departures.get(departure)
     if city is None:
         raise Http404
+    found = services.counter_tours(data.tours, departure)
     return render(request, 'departure.html', context={
-        'name': city
-    })
+        "infos": data.tours,
+        "found": found,
+        "title": data.title,
+        "subtitle": data.subtitle,
+        "departures": data.departures}
+    )
 
 
-def TourView(request, id):
-    tour = id
-    return render(request, 'tour.html', context={'tour': tour})
+def tour_view(request, id):
+    if id is None or id < 1 or id > 16:
+        raise Http404
+    info = data.tours[id]
+    return render(request, 'tour.html', context={
+        "info": info,
+        "title": data.title,
+        "subtitle": data.subtitle,
+        "departures": data.departures}
+    )
 
 
 def custom_handler404(request, exception):
